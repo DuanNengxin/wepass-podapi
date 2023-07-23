@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package podApi;
 
-option go_package="./proto;protoapi";
+option go_package="./proto;podapi";
 
 service PodApiService {
   rpc GetPodById(Request) returns(Response) {}
