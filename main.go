@@ -38,7 +38,7 @@ var (
 	//熔断端口，每个服务不能重复
 	hystrixPort = 9093
 	//监控端口，每个服务不能重复
-	//prometheusPort = 9192
+	prometheusPort = 9192
 )
 
 func main() {
@@ -71,14 +71,14 @@ func main() {
 		}
 	}()
 
-	go common.PrometheusBoot()
+	go common.PrometheusBoot(prometheusPort)
 
 	srv := micro.NewService(
 		//自定义服务地址，必须要写在其它参数前面
 		micro.Server(server.NewServer(func(options *server.Options) {
 			options.Advertise = serviceHost + ":" + servicePort
 		})),
-		micro.Name("wepass-podApi"),
+		micro.Name("go.micro.api.podApi"),
 		micro.Version("v1.0"),
 		//指定服务端口
 		micro.Address(":"+servicePort),
@@ -97,7 +97,7 @@ func main() {
 	// 初始化服务
 	srv.Init()
 
-	podService := pod.NewPodService("wepass-pod", srv.Client())
+	podService := pod.NewPodService("go.micro.service.pod", srv.Client())
 	// 创建服务句柄
 	err = podapi.RegisterPodApiServiceHandler(srv.Server(), &handler.PodApi{PodService: podService})
 	if err != nil {
